@@ -22,7 +22,7 @@ class HarringtonSmoClassifier(Classifier):
     
     
     def predict(self, X):
-        Y = add(multiply(self.alphas) * X, 1)
+        Y = add(multiply(self.alphas) * X, self.b)
         return Y
 
 
