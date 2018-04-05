@@ -18,11 +18,16 @@ class HarringtonSmoClassifier(Classifier):
         toler = 0.001
         maxIter = 50
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
+        self.b = self.b.item(0)
+        self.alphas = list(\
+                map(lambda alpha: alpha.item(0), \
+                    filter(lambda alpha: alpha > 0, self.alphas)\
+                ))
         return self.b, self.alphas
     
     
     def predict(self, X):
-        Y = add(multiply(self.alphas) * X, self.b)
+        Y = add(multiply(self.alphas), X, self.b)
         return Y
 
 
