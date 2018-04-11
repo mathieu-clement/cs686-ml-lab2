@@ -19,10 +19,7 @@ class HarringtonSmoClassifier(Classifier):
         maxIter = 50
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
         self.b = self.b.item(0)
-        #self.alphas = list(\
-        #        map(lambda alpha: alpha.item(0), \
-        #            filter(lambda alpha: alpha > 0, self.alphas)\
-        #        ))
+        
         indices = (self.alphas > 0).nonzero()[0]
         self.sv = mat(X)[indices]
         self.alphas = self.alphas[indices]
