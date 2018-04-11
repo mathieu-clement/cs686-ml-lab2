@@ -2,6 +2,8 @@
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
+import seaborn as sns
 from svm import HarringtonSmoClassifier as HSC
 
 
@@ -16,38 +18,10 @@ def get_data(filename):
     return datamatrix, labelmatrix
 
 
-def plot_fit(fit_line, datamatrix, labelmatrix):
-    weights = fit_line.getA()
-
-    dataarray = np.asarray(datamatrix)
-    n = dataarray.shape[0]
-
-    # Keep track of the two classes in different arrays so they can be plotted later...
-    xcord1 = []
-    ycord1 = []
-    xcord2 = []
-    ycord2 = []
-    for i in range(n):
-        if int(labelmatrix[i]) == 1:
-            xcord1.append(dataarray[i, 1])
-            ycord1.append(dataarray[i, 2])
-        else:
-            xcord2.append(dataarray[i, 1])
-            ycord2.append(dataarray[i, 2])
-    fig = plt.figure()
-
-    # Plot the data as points with different colours
-    ax = fig.add_subplot(111)
-    ax.scatter(xcord1, ycord1, s=30, c='red', marker='s')
-    ax.scatter(xcord2, ycord2, s=30, c='green')
-
-    # Plot the best-fit line
-    x = np.arange(-3.0, 3.0, 0.1)
-    y = (-weights[0] - weights[1] * x) / weights[2]
-    ax.plot(x, y)
-
-    plt.xlabel('x1')
-    plt.ylabel('x2')
+def plot(X, Y):
+    data = np.concatenate((np.matrix(X), np.matrix(Y).T), axis=1)
+    df = pd.DataFrame(data=data, columns=['X0', 'X1', 'Y'])
+    sns.lmplot('X0', 'X1', data=df, hue='Y', fit_reg=False)
     plt.show()
 
 
@@ -110,3 +84,4 @@ print('Accuracy:', accuracy(test_y, hypotheses))
 
 print_confusion_matrix(test_y, hypotheses)
 
+plot(X, Y)
