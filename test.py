@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from svm import HarringtonSmoClassifier as HSC
+from sklearn.metrics import accuracy_score
 
 
 def plot(X, Y):
@@ -69,11 +70,12 @@ b, alphas, sv = clf.fit(train_x, train_y)
 print('b:', b)
 print('alphas:', alphas)
 print('support vectors:', sv)
+print('targets of sv', clf.train_y_sv)
 
 hypotheses = clf.predict(test_x)
 print('hypotheses:', hypotheses)
 
-print('Accuracy:', accuracy(test_y, hypotheses))
+print('Accuracy:', accuracy_score(test_y, hypotheses))
 
 print_confusion_matrix(test_y, hypotheses)
 

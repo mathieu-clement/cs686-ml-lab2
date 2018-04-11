@@ -20,10 +20,10 @@ class HarringtonSmoClassifier(Classifier):
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
         self.b = self.b.item(0)
         
-        indices = (self.alphas > 0).nonzero()[0]
-        self.sv = mat(X)[indices]
-        self.alphas = self.alphas[indices]
-        self.train_y_sv = array(Y)[indices]
+        _indices = (self.alphas > 0).nonzero()[0]
+        self.sv = mat(X)[_indices]
+        self.alphas = self.alphas[_indices]
+        self.train_y_sv = array(Y)[_indices]
         return self.b, self.alphas, self.sv
     
     
