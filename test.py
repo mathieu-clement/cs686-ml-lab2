@@ -72,9 +72,9 @@ def print_confusion_matrix(labels, hypotheses):
         count += 1.0
         if l == 1 and h == 1:
             tp += 1.0
-        elif l == 1 and h == 0:
+        elif l == 1 and h == -1:
             fn += 1.0
-        elif l == 0 and h == 0:
+        elif l == -1 and h == -1:
             tn += 1.0
         else:
             fn += 1
@@ -82,26 +82,31 @@ def print_confusion_matrix(labels, hypotheses):
     print('\tConfusion Matrix')
     print('-----------------------------')
     print('\t\tPredicted')
-    print('\tActual\tNO\tYES')
+    print('\tActual\t-1\t+1')
     print('-----------------------------')
-    print('\tNO\t', tn, '\t', fp)
+    print('\t-1\t', tn, '\t', fp)
     print('-----------------------------')
-    print('\tYES\t', fn, '\t', tp)
+    print('\t+1\t', fn, '\t', tp)
     print('-----------------------------')
 
     
 X, Y = get_data('linearly_separable.tsv')
+split = int(len(Y) * 0.8)
+train_x = X[:split]
+train_y = Y[:split]
+test_x = X[split:]
+test_y = Y[split:]
 
 clf = HSC()
-b, alphas = clf.fit(X, Y)
+b, alphas, sv = clf.fit(train_x, train_y)
 print('b:', b)
-print('alphas', alphas)
+print('alphas:', alphas)
+print('support vectors:', sv)
 #plot_fit(w, X, Y)
 
-verify_x, verify_y = get_data('verify.txt')
-hypotheses = clf.predict(verify_x)
+hypotheses = clf.predict(test_x)
 
-print('Accuracy:', accuracy(verify_y, hypotheses))
+print('Accuracy:', accuracy(test_y, hypotheses))
 
-print_confusion_matrix(verify_y, hypotheses)
+print_confusion_matrix(test_y, hypotheses)
 

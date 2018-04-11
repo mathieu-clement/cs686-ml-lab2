@@ -12,22 +12,27 @@ class HarringtonSmoClassifier(Classifier):
 
 
     def fit(self, X, Y):
-        dataMatIn = X
+        dataMatIn = matrix(X)
         classLabels = Y
         C = 1.0
         toler = 0.001
         maxIter = 50
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
         self.b = self.b.item(0)
-        self.alphas = list(\
-                map(lambda alpha: alpha.item(0), \
-                    filter(lambda alpha: alpha > 0, self.alphas)\
-                ))
-        return self.b, self.alphas
+        #self.alphas = list(\
+        #        map(lambda alpha: alpha.item(0), \
+        #            filter(lambda alpha: alpha > 0, self.alphas)\
+        #        ))
+        indices = (self.alphas > 0).nonzero()[0]
+        self.sv = mat(X)[indices]
+        self.alphas = self.alphas[indices]
+        return self.b, self.alphas, self.sv
     
     
     def predict(self, X):
-        Y = add(multiply(self.alphas), X, self.b)
+        U = self.sv.transpose().dot(self.alphas)
+        Y = mat(X).dot(U) + self.b
+        Y = where(Y < -1, -1, 1)
         return Y
 
 
@@ -98,13 +103,19 @@ class HarringtonSmoClassifier(Classifier):
             else:
                 L = max(0, oS.alphas[j] + oS.alphas[i] - oS.C)
                 H = min(oS.C, oS.alphas[j] + oS.alphas[i])
-            if L==H: print("L==H"); return 0
+            if L==H: 
+                #print("L==H")
+                return 0
             eta = 2.0 * oS.X[i,:]*oS.X[j,:].T - oS.X[i,:]*oS.X[i,:].T - oS.X[j,:]*oS.X[j,:].T
-            if eta >= 0: print("eta>=0"); return 0
+            if eta >= 0: 
+                #print("eta>=0")
+                return 0
             oS.alphas[j] -= oS.labelMat[j]*(Ei - Ej)/eta
             oS.alphas[j] = self.clipAlpha(oS.alphas[j],H,L)
             self.updateEkK(oS, j) #added this for the Ecache
-            if (abs(oS.alphas[j] - alphaJold) < 0.00001): print("j not moving enough"); return 0
+            if (abs(oS.alphas[j] - alphaJold) < 0.00001): 
+                #print("j not moving enough")
+                return 0
             oS.alphas[i] += oS.labelMat[j]*oS.labelMat[i]*(alphaJold - oS.alphas[j])#update i by the same amount as j
             self.updateEkK(oS, i) #added this for the Ecache                    #the update is in the oppostie direction
             b1 = oS.b - Ei- oS.labelMat[i]*(oS.alphas[i]-alphaIold)*oS.X[i,:]*oS.X[i,:].T - oS.labelMat[j]*(oS.alphas[j]-alphaJold)*oS.X[i,:]*oS.X[j,:].T
@@ -125,15 +136,15 @@ class HarringtonSmoClassifier(Classifier):
             if entireSet:   #go over all
                 for i in range(oS.m):        
                     alphaPairsChanged += self.innerLK(i,oS)
-                    print("fullSet, iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged))
+                    #print("fullSet, iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged))
                 iter += 1
             else:#go over non-bound (railed) alphas
                 nonBoundIs = nonzero((oS.alphas.A > 0) * (oS.alphas.A < C))[0]
                 for i in nonBoundIs:
                     alphaPairsChanged += self.innerLK(i,oS)
-                    print("non-bound, iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged))
+                    #print("non-bound, iter: %d i:%d, pairs changed %d" % (iter,i,alphaPairsChanged))
                 iter += 1
             if entireSet: entireSet = False #toggle entire set loop
             elif (alphaPairsChanged == 0): entireSet = True  
-            print("iteration number: %d" % iter)
+            #print("iteration number: %d" % iter)
         return oS.b,oS.alphas
