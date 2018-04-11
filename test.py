@@ -7,17 +7,6 @@ import seaborn as sns
 from svm import HarringtonSmoClassifier as HSC
 
 
-def get_data(filename):
-    datamatrix = []
-    labelmatrix = []
-    fr = open(filename)
-    for line in fr.readlines():
-        lineArr = line.strip().split()
-        datamatrix.append([float(lineArr[0]), float(lineArr[1])])
-        labelmatrix.append(int(lineArr[2]))
-    return datamatrix, labelmatrix
-
-
 def plot(X, Y):
     data = np.concatenate((np.matrix(X), np.matrix(Y).T), axis=1)
     df = pd.DataFrame(data=data, columns=['X0', 'X1', 'Y'])
@@ -64,11 +53,15 @@ def print_confusion_matrix(labels, hypotheses):
     print('-----------------------------')
 
     
-X, Y = get_data('linearly_separable.tsv')
+df = pd.read_csv('linearly_separable.csv', header=None)
+df = np.random.permutation(df)
+X = df[:,:2]
+Y = df[:,2]
+
 split = int(len(Y) * 0.8)
-train_x = X[:split]
+train_x = X[:split,:]
 train_y = Y[:split]
-test_x = X[split:]
+test_x = X[split:,:]
 test_y = Y[split:]
 
 clf = HSC()
@@ -76,9 +69,9 @@ b, alphas, sv = clf.fit(train_x, train_y)
 print('b:', b)
 print('alphas:', alphas)
 print('support vectors:', sv)
-#plot_fit(w, X, Y)
 
 hypotheses = clf.predict(test_x)
+print('hypotheses:', hypotheses)
 
 print('Accuracy:', accuracy(test_y, hypotheses))
 

@@ -23,13 +23,15 @@ class HarringtonSmoClassifier(Classifier):
         indices = (self.alphas > 0).nonzero()[0]
         self.sv = mat(X)[indices]
         self.alphas = self.alphas[indices]
+        self.train_y_sv = array(Y)[indices]
         return self.b, self.alphas, self.sv
     
     
     def predict(self, X):
         U = self.sv.transpose().dot(self.alphas)
         Y = mat(X).dot(U) + self.b
-        Y = where(Y < -1, -1, 1)
+        print(Y)
+        Y = where(Y <= -1, -1, 1)
         return Y
 
 
