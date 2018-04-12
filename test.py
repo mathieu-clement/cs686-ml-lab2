@@ -79,7 +79,7 @@ X = df[:,:2]
 Y = df[:,2]
 
 total_acc = 0
-iter = 30
+iter = 100
 
 clf = HSC()
 
