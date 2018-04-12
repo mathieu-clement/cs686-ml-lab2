@@ -59,25 +59,35 @@ df = np.random.permutation(df)
 X = df[:,:2]
 Y = df[:,2]
 
-split = int(len(Y) * 0.8)
-train_x = X[:split,:]
-train_y = Y[:split]
-test_x = X[split:,:]
-test_y = Y[split:]
-#train_x = X
-#train_y = Y
-#test_x = X
-#test_y = Y
+total_acc = 0
+iter = 30
 
 clf = HSC()
-clf.fit(train_x, train_y)
-print('weights', clf.w)
 
-hypotheses = clf.predict(test_x)
-print('hypotheses:', hypotheses)
+for i in range(iter):
 
-print('Accuracy:', accuracy_score(test_y, hypotheses))
+    split = int(len(Y) * 0.8)
+    train_x = X[:split,:]
+    train_y = Y[:split]
+    test_x = X[split:,:]
+    test_y = Y[split:]
+    #train_x = X
+    #train_y = Y
+    #test_x = X
+    #test_y = Y
 
-print_confusion_matrix(test_y, hypotheses)
+    clf.fit(train_x, train_y)
+    print('weights', clf.w)
+
+    hypotheses = clf.predict(test_x)
+    print('hypotheses:', hypotheses)
+
+    acc = accuracy_score(test_y, hypotheses)
+    print('Accuracy:', acc)
+    total_acc += acc
+
+    print_confusion_matrix(test_y, hypotheses)
+
+print("Average accuracy: %.3f" % (total_acc/iter))
 
 #plot(X, Y)
