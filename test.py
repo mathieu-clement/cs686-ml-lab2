@@ -64,13 +64,14 @@ train_x = X[:split,:]
 train_y = Y[:split]
 test_x = X[split:,:]
 test_y = Y[split:]
+#train_x = X
+#train_y = Y
+#test_x = X
+#test_y = Y
 
 clf = HSC()
-b, alphas, sv = clf.fit(train_x, train_y)
-print('b:', b)
-print('alphas:', alphas)
-print('support vectors:', sv)
-print('targets of sv', clf.train_y_sv)
+clf.fit(train_x, train_y)
+print('weights', clf.w)
 
 hypotheses = clf.predict(test_x)
 print('hypotheses:', hypotheses)
@@ -79,4 +80,4 @@ print('Accuracy:', accuracy_score(test_y, hypotheses))
 
 print_confusion_matrix(test_y, hypotheses)
 
-plot(X, Y)
+#plot(X, Y)

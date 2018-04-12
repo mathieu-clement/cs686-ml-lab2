@@ -9,6 +9,7 @@ class HarringtonSmoClassifier(Classifier):
         super()
         self.alphas = None
         self.b = None
+        self.w = None
 
 
     def fit(self, X, Y):
@@ -19,20 +20,24 @@ class HarringtonSmoClassifier(Classifier):
         maxIter = 50
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
         self.b = self.b.item(0)
-        
-        _indices = (self.alphas > 0).nonzero()[0]
-        self.sv = mat(X)[_indices]
-        self.alphas = self.alphas[_indices]
-        self.train_y_sv = array(Y)[_indices]
-        return self.b, self.alphas, self.sv
+        self.w = self.calcWs(self.alphas, X, Y)
+        return self.b, self.alphas
     
     
     def predict(self, X):
-        U = self.sv.transpose().dot(self.alphas)
-        Y = mat(X).dot(U) + self.b
+        Y = mat(X) * ( self.w) + self.b
         print(Y)
         Y = where(Y <= -1, -1, 1)
         return Y
+
+    def calcWs(self, alphas,dataArr,classLabels):
+        X = mat(dataArr)
+        labelMat = mat(classLabels).transpose()
+        m,n = shape(X)
+        w = zeros((n,1))
+        for i in range(m):
+            w += multiply(alphas[i]*labelMat[i],X[i,:].T)
+        return w
 
 
     def selectJrand(self,i,m):
