@@ -14,9 +14,9 @@ def plot(X, Y):
     sns.lmplot('X0', 'X1', data=df, hue='Y', fit_reg=False)
 
 def plot_data(inputs,targets,weights):
-    # https://stackoverflow.com/a/48022752/753136
+    # Some parts inspired from https://stackoverflow.com/a/48022752/753136
     # fig config
-    plt.figure()
+    fig, ax = plt.subplots()
     plt.grid(True)
 
     #plot input samples(2D data points) and i have two classes.
@@ -24,14 +24,22 @@ def plot_data(inputs,targets,weights):
     for input,target in zip(inputs,targets):
         plt.plot(input[0],input[1],'ro' if (target == 1.0) else 'bo')
 
+    x = []
+    y1 = []
+
     # Here i am calculating slope and intercept with given three weights
-    for i in np.linspace(np.amin(inputs[:,:1]),np.amax(inputs[:,:1])):
+    for i in np.linspace(-2,7):
         slope = -(weights[0]/weights[2])/(weights[0]/weights[1])
         intercept = -weights[0]/weights[2]
 
         #y =mx+c, m is slope and c is intercept
         y = (slope*i) + intercept
         plt.plot(i, y,'k*')
+        x.append(i)
+        y1.append(y.item(0))
+
+    ax.fill_between(x, y1, np.amin(y1), color='pink')
+    ax.fill_between(x, np.amax(y1), y1, color='lightblue')
 
 
 def accuracy(labels, hypotheses):
