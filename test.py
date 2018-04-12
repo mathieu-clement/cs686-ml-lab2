@@ -31,7 +31,7 @@ def plot_data(inputs,targets,weights):
 
         #y =mx+c, m is slope and c is intercept
         y = (slope*i) + intercept
-        plt.plot(i, y,'ko')
+        plt.plot(i, y,'k*')
 
 
 def accuracy(labels, hypotheses):
