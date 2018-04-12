@@ -14,8 +14,9 @@ def plot(X, Y):
     sns.lmplot('X0', 'X1', data=df, hue='Y', fit_reg=False)
 
 def plot_data(inputs,targets,weights):
+    # https://stackoverflow.com/a/48022752/753136
     # fig config
-    plt.figure(figsize=(10,6))
+    plt.figure()
     plt.grid(True)
 
     #plot input samples(2D data points) and i have two classes.
