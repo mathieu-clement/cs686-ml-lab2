@@ -21,7 +21,7 @@ class HarringtonSmoClassifier(Classifier):
         self.b, self.alphas = self.smoPK(dataMatIn, classLabels, C, toler, maxIter)
         self.b = self.b.item(0)
         self.w = self.calcWs(self.alphas, X, Y)
-        return self.b, self.alphas
+        return self
     
     
     def predict(self, X):

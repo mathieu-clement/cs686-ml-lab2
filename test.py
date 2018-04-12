@@ -71,10 +71,6 @@ for i in range(iter):
     train_y = Y[:split]
     test_x = X[split:,:]
     test_y = Y[split:]
-    #train_x = X
-    #train_y = Y
-    #test_x = X
-    #test_y = Y
 
     clf.fit(train_x, train_y)
     print('weights', clf.w)
