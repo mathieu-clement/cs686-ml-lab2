@@ -26,7 +26,7 @@ class HarringtonSmoClassifier(Classifier):
     
     def predict(self, X):
         Y = mat(X) * ( self.w) + self.b
-        print(Y)
+        #print(Y)
         Y = where(Y <= -1, -1, 1)
         return Y
 
