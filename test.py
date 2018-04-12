@@ -12,7 +12,25 @@ def plot(X, Y):
     data = np.concatenate((np.matrix(X), np.matrix(Y).T), axis=1)
     df = pd.DataFrame(data=data, columns=['X0', 'X1', 'Y'])
     sns.lmplot('X0', 'X1', data=df, hue='Y', fit_reg=False)
-    plt.show()
+
+def plot_data(inputs,targets,weights):
+    # fig config
+    plt.figure(figsize=(10,6))
+    plt.grid(True)
+
+    #plot input samples(2D data points) and i have two classes.
+    #one is +1 and second one is -1, so it red color for +1 and blue color for -1
+    for input,target in zip(inputs,targets):
+        plt.plot(input[0],input[1],'ro' if (target == 1.0) else 'bo')
+
+    # Here i am calculating slope and intercept with given three weights
+    for i in np.linspace(np.amin(inputs[:,:1]),np.amax(inputs[:,:1])):
+        slope = -(weights[0]/weights[2])/(weights[0]/weights[1])
+        intercept = -weights[0]/weights[2]
+
+        #y =mx+c, m is slope and c is intercept
+        y = (slope*i) + intercept
+        plt.plot(i, y,'ko')
 
 
 def accuracy(labels, hypotheses):
@@ -64,6 +82,9 @@ iter = 30
 
 clf = HSC()
 
+train_x = None
+train_y = None
+
 for i in range(iter):
 
     split = int(len(Y) * 0.8)
@@ -85,5 +106,8 @@ for i in range(iter):
     print_confusion_matrix(test_y, hypotheses)
 
 print("Average accuracy: %.3f" % (total_acc/iter))
-
-#plot(X, Y)
+plot(X, Y)
+weights = [clf.b]
+weights.extend(clf.w)
+plot_data(train_x, train_y, weights)
+plt.show()
