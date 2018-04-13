@@ -82,9 +82,6 @@ def print_confusion_matrix(labels, hypotheses):
 
     
 df = pd.read_csv('linearly_separable.csv', header=None)
-df = np.random.permutation(df)
-X = df[:,:2]
-Y = df[:,2]
 
 total_acc = 0
 iter = 100
@@ -95,6 +92,9 @@ train_x = None
 train_y = None
 
 for i in range(iter):
+    df = np.random.permutation(df)
+    X = df[:,:2]
+    Y = df[:,2]
 
     split = int(len(Y) * 0.8)
     train_x = X[:split,:]
